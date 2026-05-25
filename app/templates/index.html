@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}NETRAUMATICS :: INDEX{% endblock %}
+
+{% block content %}
+<div class="posts-container">
+    <h1>&gt;&gt; ENTRIES </h1>
+
+    {% if posts %}
+        {% for post in posts %}
+            <article class="post-card" id="post-{{ post.id }}">
+                <h2 class="post-title" onclick="togglePost('{{ post.id }}')">
+                    <span class="expand-indicator">[+]</span> {{ post.title }}
+                </h2>
+                <div class="post-meta">
+                    <span class="author">{{ post.author }}</span>
+                    <span class="date">{{ post.date.strftime('%Y-%m-%d') if post.date.strftime else post.date }}</span>
+                </div>
+                <div class="post-content" id="content-{{ post.id }}" style="display: none;">
+                    {{ post.content|safe }}
+                </div>
+            </article>
+        {% endfor %}
+    {% else %}
+        <p class="no-posts">NO TRANSMISSIONS DETECTED. ADD MARKDOWN FILES TO posts/ DIRECTORY.</p>
+    {% endif %}
+</div>
+
+<script>
+function togglePost(postId) {
+    const content = document.getElementById('content-' + postId);
+    const indicator = document.querySelector('#post-' + postId + ' .expand-indicator');
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        indicator.textContent = '[-]';
+    } else {
+        content.style.display = 'none';
+        indicator.textContent = '[+]';
+    }
+}
+</script>
+
+<style>
+.post-title {
+    cursor: pointer;
+    user-select: none;
+}
+
+.post-title:hover {
+    color: #cccccc;
+}
+
+.expand-indicator {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.post-content {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dotted #333333;
+}
+
+.post-content p {
+    margin-bottom: 10px;
+}
+
+.post-content blockquote {
+    border-left: 2px solid #ffffff;
+    padding-left: 15px;
+    margin: 15px 0;
+    color: #aaaaaa;
+}
+
+.post-content code {
+    background-color: #0a0a0a;
+    padding: 2px 5px;
+    border: 1px solid #333333;
+}
+
+.post-content pre {
+    background-color: #0a0a0a;
+    padding: 10px;
+    border: 1px solid #333333;
+    overflow-x: auto;
+}
+</style>
+{% endblock %}

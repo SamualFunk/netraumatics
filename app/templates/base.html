@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NETRAUMATICS{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000000;
+            color: #cc1a1a;
+            line-height: 1.4;
+            font-size: 13px;
+        }
+
+        a {
+            color: #cc1a1a;
+            text-decoration: none;
+            border-bottom: 1px dotted #cc1a1a;
+        }
+
+        a:hover {
+            color: #000000;
+            border-bottom: 2px solid #000000;
+            background-color: #cc1a1a;
+        }
+
+        /* Layout */
+        .page-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .side-glyph {
+            width: 60px;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .side-glyph-inner {
+            position: fixed;
+            top: 0;
+            width: 60px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        .side-glyph-inner span {
+            font-size: 42px;
+            color: #1a0000;
+            line-height: 1.1;
+            user-select: none;
+            flex-shrink: 0;
+            display: block;
+            text-align: center;
+            width: 100%;
+        }
+
+        .main-column {
+            flex: 1;
+            max-width: 800px;
+            min-width: 0;
+            padding: 0 20px;
+            border-left: 1px solid #1a0000;
+            border-right: 1px solid #1a0000;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 2px solid #cc1a1a;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .site-title {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #cc1a1a;
+            text-decoration: none;
+            border: none;
+            text-shadow: 2px 2px #330000;
+        }
+
+        .site-title:hover {
+            color: #cc1a1a;
+            background: none;
+            text-shadow: 2px 2px #cc1a1a;
+        }
+
+        nav {
+            margin-top: 10px;
+            font-size: 11px;
+        }
+
+        nav a {
+            margin-right: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Content */
+        main {
+            min-height: 70vh;
+            padding: 20px 0;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px dashed #cc1a1a;
+            background-color: #0a0000;
+        }
+
+        .alert-success { color: #cc1a1a; }
+
+        .alert-error {
+            color: #cc1a1a;
+            border-color: #cc1a1a;
+            background-color: #0a0000;
+        }
+
+        h1, h2, h3 {
+            color: #cc1a1a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 18px;
+            border-bottom: 1px solid #cc1a1a;
+            padding-bottom: 5px;
+        }
+
+        h2 { font-size: 16px; }
+
+        .post-card {
+            border: 1px solid #330000;
+            padding: 15px;
+            margin-bottom: 25px;
+            background-color: #050000;
+        }
+
+        .post-card:hover {
+            border-color: #cc1a1a;
+            box-shadow: 0 0 10px #660000;
+        }
+
+        .post-meta {
+            color: #883333;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .post-meta span { margin-right: 15px; }
+
+        .post-excerpt {
+            color: #aa5555;
+            margin-bottom: 10px;
+        }
+
+        .read-more {
+            color: #cc1a1a;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        .no-posts {
+            text-align: center;
+            padding: 50px 0;
+            color: #883333;
+        }
+
+        .post-full {
+            border: 1px solid #cc1a1a;
+            padding: 20px;
+            background-color: #050000;
+        }
+
+        .post-content {
+            margin: 20px 0;
+            color: #aa5555;
+            white-space: pre-wrap;
+        }
+
+        .post-actions {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dotted #330000;
+        }
+
+        .form-container {
+            border: 1px solid #cc1a1a;
+            padding: 20px;
+            background-color: #050000;
+        }
+
+        .form-group { margin-bottom: 15px; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            background-color: #000000;
+            border: 1px solid #330000;
+            color: #cc1a1a;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #cc1a1a;
+            box-shadow: 0 0 5px #660000;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            border: 1px solid #cc1a1a;
+            background-color: #000000;
+            color: #cc1a1a;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background-color: #cc1a1a;
+            color: #000000;
+            border-bottom: 1px solid #cc1a1a;
+        }
+
+        .btn-danger { border-color: #cc1a1a; color: #cc1a1a; }
+        .btn-danger:hover { background-color: #cc1a1a; color: #000000; }
+        .btn-link { border: none; background: none; text-decoration: underline; }
+
+        footer {
+            border-top: 2px solid #cc1a1a;
+            padding: 20px 0;
+            margin-top: 50px;
+            text-align: center;
+            font-size: 10px;
+            color: #883333;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        @keyframes glitch {
+            0%  { text-shadow:  2px  2px #cc1a1a, -2px -2px #660000; }
+            25% { text-shadow: -2px  2px #cc1a1a,  2px -2px #660000; }
+            50% { text-shadow:  2px -2px #cc1a1a, -2px  2px #660000; }
+            75% { text-shadow: -2px -2px #cc1a1a,  2px  2px #660000; }
+            100%{ text-shadow:  2px  2px #cc1a1a, -2px -2px #660000; }
+        }
+
+        .glitch { animation: glitch 0.3s infinite; }
+
+        @media (max-width: 900px) {
+            .side-glyph { display: none; }
+            .main-column { border: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+
+        <div class="side-glyph">
+            <div class="side-glyph-inner" id="glyph-left"></div>
+        </div>
+
+        <div class="main-column">
+            <header>
+                <a href="{{ url_for('blog.index') }}" class="site-title">NETRAUMATICS</a>
+                <nav>
+                    <a href="{{ url_for('blog.index') }}">[index]</a>
+                </nav>
+            </header>
+
+            <main>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </main>
+
+            <footer>
+                <p>&gt;&gt; NETRAUMATICS :::: 2026 &lt;&lt;</p>
+            </footer>
+        </div>
+
+        <div class="side-glyph">
+            <div class="side-glyph-inner" id="glyph-right"></div>
+        </div>
+
+    </div>
+
+    <script>
+        function fillGlyphs(el, char) {
+            const h = window.innerHeight;
+            const size = 42 * 1.1; // font-size * line-height
+            const count = Math.ceil(h / size) + 2;
+            el.innerHTML = Array(count).fill(`<span>${char}</span>`).join('');
+        }
+        fillGlyphs(document.getElementById('glyph-left'),  '人工');
+        fillGlyphs(document.getElementById('glyph-right'), '人工');
+        window.addEventListener('resize', () => {
+            fillGlyphs(document.getElementById('glyph-left'),  '人工');
+            fillGlyphs(document.getElementById('glyph-right'), '人工');
+        });
+    </script>
+</body>
+</html>
