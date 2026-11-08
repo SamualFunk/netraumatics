@@ -1,36 +1,52 @@
 {% extends "base.html" %}
 
-{% block title %}NETRAUMATICS :: INDEX{% endblock %}
+{% block title %}NETRAUMATICS :: ENTRIES{% endblock %}
 
 {% block content %}
-<div class="posts-container">
-    <h1>&gt;&gt; ENTRIES </h1>
-
-    {% if posts %}
-        {% for post in posts %}
-            <article class="post-card" id="post-{{ post.id }}">
-                <h2 class="post-title" onclick="togglePost('{{ post.id }}')">
-                    <span class="expand-indicator">[+]</span> {{ post.title }}
+{% macro entry_list(items, prefix, empty_msg) %}
+    {% if items %}
+        {% for item in items %}
+            {% set key = prefix ~ '-' ~ item.id %}
+            <article class="post-card" id="entry-{{ key }}">
+                <h2 class="post-title" onclick="toggleEntry('{{ key }}')">
+                    <span class="expand-indicator">[+]</span> {{ item.title }}
                 </h2>
                 <div class="post-meta">
-                    <span class="author">{{ post.author }}</span>
-                    <span class="date">{{ post.date.strftime('%Y-%m-%d') if post.date.strftime else post.date }}</span>
+                    <span class="author">{{ item.author }}</span>
+                    <span class="date">{{ item.date.strftime('%Y-%m-%d') if item.date.strftime else item.date }}</span>
                 </div>
-                <div class="post-content" id="content-{{ post.id }}" style="display: none;">
-                    {{ post.content|safe }}
+                <div class="post-content" id="content-{{ key }}" style="display: none;">
+                    {{ item.content|safe }}
                 </div>
             </article>
         {% endfor %}
     {% else %}
-        <p class="no-posts">NO TRANSMISSIONS DETECTED. ADD MARKDOWN FILES TO posts/ DIRECTORY.</p>
+        <p class="no-posts">{{ empty_msg }}</p>
     {% endif %}
+{% endmacro %}
+
+<div class="posts-container">
+    <h1>&gt;&gt; ENTRIES </h1>
+
+    <nav class="tabs">
+        <button class="tab active" data-tab="posts">[ POSTS ]</button>
+        <button class="tab" data-tab="divination">[ DIVINATION ]</button>
+    </nav>
+
+    <section id="tab-posts" class="tab-panel active">
+        {{ entry_list(posts, 'posts', 'ADD MARKDOWN FILES TO posts/ DIRECTORY.') }}
+    </section>
+
+    <section id="tab-divination" class="tab-panel">
+        {{ entry_list(divinations, 'divination', 'ADD MARKDOWN FILES TO divination/ DIRECTORY.') }}
+    </section>
 </div>
 
 <script>
-function togglePost(postId) {
-    const content = document.getElementById('content-' + postId);
-    const indicator = document.querySelector('#post-' + postId + ' .expand-indicator');
-    
+function toggleEntry(key) {
+    const content = document.getElementById('content-' + key);
+    const indicator = document.getElementById('entry-' + key).querySelector('.expand-indicator');
+
     if (content.style.display === 'none') {
         content.style.display = 'block';
         indicator.textContent = '[-]';
@@ -39,9 +55,63 @@ function togglePost(postId) {
         indicator.textContent = '[+]';
     }
 }
+
+function showTab(name) {
+    document.querySelectorAll('.tab').forEach(t =>
+        t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('.tab-panel').forEach(p =>
+        p.classList.toggle('active', p.id === 'tab-' + name));
+}
+
+document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+        showTab(btn.dataset.tab);
+        history.replaceState(null, '', '#' + btn.dataset.tab);
+    });
+});
+
+// Open the tab named in the URL, e.g. /#divination
+const initialTab = location.hash.slice(1);
+if (document.querySelector('.tab[data-tab="' + initialTab + '"]')) {
+    showTab(initialTab);
+}
 </script>
 
 <style>
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.tab {
+    font: inherit;
+    background: transparent;
+    color: #aaaaaa;
+    border: 1px solid #333333;
+    padding: 5px 12px;
+    cursor: pointer;
+}
+
+.tab:hover {
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.tab.active {
+    color: #000000;
+    background: #ffffff;
+    border-color: #ffffff;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
 .post-title {
     cursor: pointer;
     user-select: none;
@@ -84,6 +154,13 @@ function togglePost(postId) {
     padding: 10px;
     border: 1px solid #333333;
     overflow-x: auto;
+}
+
+.post-content img {
+    max-width: 50%;
+    height: auto;
+    border: 1px solid #333333;
+    margin: 10px 0;
 }
 </style>
 {% endblock %}
